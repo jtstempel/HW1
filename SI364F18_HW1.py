@@ -94,8 +94,8 @@ def resultDouble():
 
 @app.route('/problem4form', methods = ["GET", "POST"])
 def my_form():
-	if request.method == "GET":
-		return """
+#	if request.method == "GET":
+	my_form = """
 		<form action = "" method = "POST">
 		<label> Enter your favorite musical artist:
 	    <input type = "text" name = "favorite_artist"></input>
@@ -105,7 +105,8 @@ def my_form():
 	    <input type = "submit" value = "Submit">
 	    </form>
 	    """
-	else:
+#	else:
+	if request.method == "POST":
 		artist_var = request.form.get("favorite_artist")
 		artist_var = str(artist_var)
 		artist_split = artist_var.split()
@@ -116,10 +117,10 @@ def my_form():
 		else:
 			artist_first_name = artist_split[0]
 			artist_last_name = artist_split[1]
-		
+	
 		entity_var = request.form.get("Entity")
 		entity_var= str(entity_var)
-		
+	
 		another_base_url = 'https://itunes.apple.com/search?term='
 		another_base_url += artist_first_name
 		if artist_last_name != "":
@@ -131,7 +132,15 @@ def my_form():
 		some_text = my_response.text
 		my_python_obj = json.loads(some_text)
 
-		return str(my_python_obj)
+		track_results = []
+		for my_results in my_python_obj['results']:
+			track_results.append(my_results['trackName'])
+
+		return my_form + str(track_results)
+
+	else:
+
+		return my_form
 
 
 if __name__ == '__main__':
