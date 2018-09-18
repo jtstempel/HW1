@@ -8,6 +8,7 @@
 
 ## Worked with Ava Weiner on Problem 2 
 ## Worked with Harrison Dvoor on Problem 3
+## For Problem 4, used https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/#searchexamples
 
 ## [PROBLEM 1] - 150 points
 ## Below is code for one of the simplest possible Flask applications. Edit the code so that once you 
@@ -91,9 +92,46 @@ def resultDouble():
 		return "Double your favorite number is " + find_double
 
 
-@app.route('/problem4form')
+@app.route('/problem4form', methods = ["GET", "POST"])
 def my_form():
-	
+	if request.method == "GET":
+		return """
+		<form action = "" method = "POST">
+		<label> Enter your favorite musical artist:
+	    <input type = "text" name = "favorite_artist"></input>
+	    <label> <br> Select a genre: <br>
+	    <input type = "checkbox" name = "Entity" value = "song"> Song <br>
+	    <input type = "checkbox" name = "Entity" value = "musicVideo"> Music Video <br>
+	    <input type = "submit" value = "Submit">
+	    </form>
+	    """
+	else:
+		artist_var = request.form.get("favorite_artist")
+		artist_var = str(artist_var)
+		artist_split = artist_var.split()
+		artist_first_name = ""
+		artist_last_name = ""
+		if len(artist_split) == 1:
+			artist_first_name = artist_var
+		else:
+			artist_first_name = artist_split[0]
+			artist_last_name = artist_split[1]
+		
+		entity_var = request.form.get("Entity")
+		entity_var= str(entity_var)
+		
+		another_base_url = 'https://itunes.apple.com/search?term='
+		another_base_url += artist_first_name
+		if artist_last_name != "":
+			another_base_url += '+' + artist_last_name
+		another_base_url += '&entity=' + entity_var
+		print(another_base_url)
+
+		my_response = requests.get(another_base_url)
+		some_text = my_response.text
+		my_python_obj = json.loads(some_text)
+
+		return str(my_python_obj)
 
 
 if __name__ == '__main__':
